@@ -1,0 +1,74 @@
+
+.class-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 18px;
+  padding: 0;
+  width: 100%;
+}
+
+.class-card {
+  min-height: 178px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(14px);
+  animation: itemRise 520ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.class-card::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  width: 7px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--primary), var(--accent));
+}
+
+.class-card::after {
+  content: '\F4DE';
+  font-family: 'bootstrap-icons';
+  position: absolute;
+  inset-inline-end: 18px;
+  bottom: 10px;
+  font-size: 4.2rem;
+  color: var(--primary-soft);
+}
+
+.class-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow);
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+}
+
+.class-card h2 {
+  font-size: 1.35rem;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.4;
+  font-weight: 900;
+}
+
+.class-card p {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--muted);
+  margin: 0;
+  font-size: 0.96rem;
+}
+
+.class-card i {
+  color: var(--primary-strong);
+  font-size: 1.05rem;
+}

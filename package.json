@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "start": "servor . index.html 3000 --reload",
+    "serve": "servor . index.html 3000 --reload",
+    "check": "node --check js/api.js && node --check js/app.js"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "servor": "^4.0.2"
+  }
+}

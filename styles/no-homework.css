@@ -1,0 +1,12 @@
+
+.empty-state .icon-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.empty-state .icon,
+.empty-state i {
+  color: var(--muted) !important;
+  opacity: .65;
+}

@@ -1,0 +1,28 @@
+.card {
+    transition: transform 0.2s ease-in-out;
+    border: none;
+    border-radius: 12px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.badge {
+    padding: 8px 12px;
+    border-radius: 20px;
+}
+
+.homework-section {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.bi {
+    margin-right: 0.5rem;
+}
+
+/* Custom shadows */
+.shadow-sm {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}

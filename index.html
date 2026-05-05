@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <title>SmartSchool</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="node_modules/bootstrap-icons/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="styles/main_style.css" />
+    <link rel="stylesheet" href="styles/navbar.css" />
+    <link rel="stylesheet" href="styles/fonts.css" />
+    <link rel="stylesheet" href="styles/class-selection.css" />
+    <link rel="stylesheet" href="styles/no-homework.css" />
+    <link rel="stylesheet" href="styles/login-page.css" />
+    <link rel="stylesheet" href="styles/profile-page.css" />
+  </head>
+  <body>
+    <div id="splashScreen" class="splash-screen">
+      <div class="splash-card">
+        <div class="splash-logo"><i class="bi bi-mortarboard-fill"></i></div>
+        <h1>SmartSchool</h1>
+        <p>در حال آماده‌سازی پنل مدرسه</p>
+        <div class="loader-line"></div>
+      </div>
+    </div>
+
+    <div id="loginPage" class="hidden">
+      <section class="login-page-shell">
+        <div class="login-card">
+          <div class="login-brand">
+            <span><i class="bi bi-mortarboard-fill"></i></span>
+            <div>
+              <h1>SmartSchool</h1>
+              <p>سامانه هوشمند مدرسه برای معلم و دانش‌آموز</p>
+            </div>
+          </div>
+          <form id="loginForm" class="login-form">
+            <label class="form-label" for="typeUsernameX">نام کاربری</label>
+            <input type="text" id="typeUsernameX" class="form-control form-control-lg" autocomplete="username" />
+
+            <label class="form-label" for="typePasswordX">رمز عبور</label>
+            <input type="password" id="typePasswordX" class="form-control form-control-lg" autocomplete="current-password" />
+
+            <button class="btn btn-primary btn-lg w-100" type="submit" id="login-form-submit-button">ورود به پنل</button>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <div id="dashboard" class="hidden">
+      <nav id="top-navbar-div" class="top-navbar">
+        <div class="school-name"><span>SmartSchool</span></div>
+        <div class="navbar-right">
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="تغییر تم">
+            <i class="bi bi-moon-stars"></i>
+          </button>
+          <div class="profile-dropdown">
+            <button class="profile-button" id="profile-button-id">
+              <i class="bi bi-person-circle"></i>
+              <span id="profileButtonText">پروفایل</span>
+            </button>
+            <div class="dropdown-content" id="dropdown-content-div">
+              <div class="user-info p-3 border-bottom" id="dropdown-user-info"></div>
+              <a href="#profile" class="dropdown-item" data-page="profile"><i class="bi bi-gear"></i> پروفایل</a>
+              <a class="dropdown-item danger" id="logoutButton"><i class="bi bi-box-arrow-right"></i> خروج</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main id="tabs-content">
+        <section id="home" class="page active">
+          <div id="class-list-div" class="class-list"></div>
+        </section>
+        <section id="attendance" class="page">
+          <div id="last-fifty-attendance-header-text"></div>
+        </section>
+        <section id="homework" class="page">
+          <div id="last-fifty-homework-header-text"></div>
+        </section>
+        <section id="messages" class="page">
+          <div id="last-fifty-comments-header-text"></div>
+        </section>
+        <section id="profile" class="page">
+          <div class="educational-profile-system" id="educational-profile-system-div"></div>
+        </section>
+        <section id="scores" class="page">
+          <div id="last-fifty-score-header-text"></div>
+        </section>
+      </main>
+
+      <nav id="bottom-navbar-div" class="bottom-nav">
+        <a href="#profile" class="nav-item" data-page="profile"><i class="bi bi-person"></i><span>پروفایل</span></a>
+        <a href="#scores" class="nav-item" data-page="scores"><i class="bi bi-trophy"></i><span>نمرات</span></a>
+        <a href="#messages" class="nav-item" data-page="messages"><i class="bi bi-chat-dots"></i><span>پیام‌ها</span></a>
+        <a href="#home" class="nav-item active" data-page="home"><i class="bi bi-house-fill"></i><span>خانه</span></a>
+        <a href="#homework" class="nav-item" data-page="homework"><i class="bi bi-book"></i><span>تکالیف</span></a>
+        <a href="#attendance" class="nav-item" data-page="attendance"><i class="bi bi-calendar-check"></i><span>حضور</span></a>
+      </nav>
+    </div>
+
+    <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="formModalTitle"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="formModalBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/config.js"></script>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+@font-face {
+    font-family: "vazir";
+    src: url("../node_modules/bootstrap-icons/font/fonts/Vazir.ttf");
+}
+
+@font-face {
+    font-family: "vazir-medium";
+    src: url("../node_modules/bootstrap-icons/font/fonts/Vazir-Medium.ttf");
+}
+
+@font-face {
+    font-family: "vazir-bold";
+    src: url("../node_modules/bootstrap-icons/font/fonts/Vazir-Bold.ttf");
+}
+
+@font-face {
+    font-family: "vazir-light";
+    src: url("../node_modules/bootstrap-icons/font/fonts/Vazir-Light.ttf");
+}
+
+@font-face {
+    font-family: "vazir-thin";
+    src: url("../node_modules/bootstrap-icons/font/fonts/Vazir-Thin.ttf");
+}
