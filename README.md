@@ -201,15 +201,28 @@ Usage:
 - Frontend and backend changes should be kept in sync.
 - If the backend response contracts change, parts of `js/api.js` and `js/app.js` will likely need updates.
 
-## 📌 Nice Future Additions
+## 🚀 Production Deployment Manager
 
-You can improve this README later by adding:
+This repository includes a production helper script for Linux servers:
 
-- 📷 Screenshots of the login page and dashboard
-- 🌐 A live demo link
-- 🔗 The exact backend repository URL
-- 📚 Detailed API response shapes
-- 🚀 Deployment instructions for production
+```bash
+sudo bash scripts/production-manager.sh
+```
+
+The script provides a colored interactive menu for:
+
+- Installing Nginx, Certbot, and required server packages
+- Deploying SmartSchool UI as a static production release
+- Configuring the backend API URL in `js/config.js`
+- Creating an Nginx site configuration
+- Enabling HTTPS with Let's Encrypt and Certbot
+- Deploying new releases
+- Rolling back to older releases
+- Reloading Nginx
+- Viewing status and logs
+- Uninstalling the deployed frontend
+
+The production deployment uses timestamped releases under `/var/www/smartschool-ui/releases` and points `/var/www/smartschool-ui/current` to the active release. Rollback only changes the active symlink and reloads Nginx.
 
 ## 📄 License
 
