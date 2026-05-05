@@ -134,6 +134,8 @@ If your backend runs on a different host or port, update this file.
 
 This repository is **not a standalone full product**. It depends on the SmartSchool backend for real data and business logic.
 
+Backend repository: https://github.com/EXE88/smartschool
+
 The current frontend is designed around these endpoints:
 
 - `POST /api/token/`
@@ -150,12 +152,6 @@ The current frontend is designed around these endpoints:
 - `POST /api/comments/`
 - `PATCH /api/comments/:id/`
 - `DELETE /api/comments/:id/`
-
-You should add your backend repository link here, for example:
-
-```md
-Backend repository: https://github.com/your-username/smartschool-backend
-```
 
 ## 🔐 Authentication Flow
 
@@ -217,4 +213,4 @@ You can improve this README later by adding:
 
 ## 📄 License
 
-No license file is currently defined in this repository. Add one if you plan to publish or share the project more broadly.
+This project is licensed under the MIT License. See the `LICENSE` file for details.
