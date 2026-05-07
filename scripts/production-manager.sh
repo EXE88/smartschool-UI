@@ -7,8 +7,11 @@ DEFAULT_APP_DIR="/var/www/${APP_NAME}"
 DEFAULT_NGINX_SITE="${APP_NAME}"
 DEFAULT_BACKEND_URL="https://api.example.com"
 DEFAULT_DASHBOARD_LIMIT="0"
+DEFAULT_NO_PROXY="localhost,127.0.0.1,::1"
 
 APP_DIR="${APP_DIR:-$DEFAULT_APP_DIR}"
+PROXY_URL="${SMARTSCHOOL_PROXY_URL:-}"
+NO_PROXY_VALUE="${NO_PROXY:-$DEFAULT_NO_PROXY}"
 RELEASES_DIR="$APP_DIR/releases"
 CURRENT_LINK="$APP_DIR/current"
 SHARED_DIR="$APP_DIR/shared"
@@ -84,6 +87,11 @@ validate_url() {
   [[ "$url" =~ ^https?://[^[:space:]\"\']+$ ]]
 }
 
+validate_proxy_url() {
+  local url="$1"
+  [[ "$url" =~ ^https?://[^[:space:]\"\']+$ ]]
+}
+
 validate_integer() {
   local value="$1"
   [[ "$value" =~ ^[0-9]+$ ]]
@@ -105,6 +113,68 @@ confirm() {
   [[ "$answer" =~ ^[Yy]$ ]]
 }
 
+apply_proxy() {
+  if [[ -z "$PROXY_URL" ]]; then
+    return 0
+  fi
+
+  export http_proxy="$PROXY_URL"
+  export https_proxy="$PROXY_URL"
+  export HTTP_PROXY="$PROXY_URL"
+  export HTTPS_PROXY="$PROXY_URL"
+  export no_proxy="$NO_PROXY_VALUE"
+  export NO_PROXY="$NO_PROXY_VALUE"
+  export npm_config_proxy="$PROXY_URL"
+  export npm_config_https_proxy="$PROXY_URL"
+
+  info "Proxy is enabled for this script session: $PROXY_URL"
+}
+
+clear_proxy() {
+  PROXY_URL=""
+  unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY no_proxy NO_PROXY npm_config_proxy npm_config_https_proxy
+  ok "Proxy disabled for this script session."
+}
+
+set_proxy_from_prompts() {
+  local proxy_url
+  local no_proxy_value
+
+  proxy_url="$(prompt "Proxy URL" "${PROXY_URL:-http://127.0.0.1:8080}")"
+  if ! validate_proxy_url "$proxy_url"; then
+    fail "Invalid proxy URL. Example: http://127.0.0.1:8080"
+    pause
+    return 1
+  fi
+
+  no_proxy_value="$(prompt "No-proxy hosts" "$NO_PROXY_VALUE")"
+  PROXY_URL="$proxy_url"
+  NO_PROXY_VALUE="$no_proxy_value"
+  apply_proxy
+  ok "Proxy configured for apt, npm, curl, and certbot commands in this session."
+}
+
+configure_proxy() {
+  print_header
+
+  printf "${BOLD}Current proxy:${RESET} "
+  if [[ -n "$PROXY_URL" ]]; then
+    printf "%s\n" "$PROXY_URL"
+  else
+    printf "disabled\n"
+  fi
+
+  printf "\n"
+  if ! confirm "Use proxy for downloads and network commands?" "n"; then
+    clear_proxy
+    pause
+    return 0
+  fi
+
+  set_proxy_from_prompts
+  pause
+}
+
 print_header() {
   clear || true
   printf "${CYAN}${BOLD}"
@@ -114,6 +184,9 @@ print_header() {
   printf "${RESET}"
   printf "${DIM}App dir:${RESET} %s\n" "$APP_DIR"
   printf "${DIM}Current:${RESET} %s\n\n" "$CURRENT_LINK"
+  if [[ -n "$PROXY_URL" ]]; then
+    printf "${DIM}Proxy:${RESET} %s\n\n" "$PROXY_URL"
+  fi
 }
 
 install_system_packages() {
@@ -124,6 +197,7 @@ install_system_packages() {
     return 1
   fi
 
+  apply_proxy
   info "Installing system packages..."
   apt-get update
   apt-get install -y nginx certbot python3-certbot-nginx curl ca-certificates rsync npm
@@ -260,6 +334,11 @@ install_or_update() {
   local dashboard_limit
   local email
 
+  if confirm "Use proxy for installation downloads?" "n"; then
+    set_proxy_from_prompts
+    print_header
+  fi
+
   domain="$(prompt "Frontend domain" "")"
   if [[ -z "$domain" ]]; then
     fail "Domain is required."
@@ -309,6 +388,11 @@ deploy_new_release() {
 
   local backend_url
   local dashboard_limit
+
+  if confirm "Use proxy for npm install in this deployment?" "n"; then
+    set_proxy_from_prompts
+    print_header
+  fi
 
   backend_url="$(prompt "Backend API base URL" "$DEFAULT_BACKEND_URL")"
   if ! validate_url "$backend_url"; then
@@ -427,6 +511,12 @@ renew_ssl() {
   require_root
   print_header
 
+  if confirm "Use proxy for Certbot renewal test?" "n"; then
+    set_proxy_from_prompts
+    print_header
+  fi
+
+  apply_proxy
   certbot renew --dry-run
   ok "Certbot dry-run renewal completed."
   pause
@@ -475,7 +565,8 @@ main_menu() {
     printf "  ${GREEN}5)${RESET} Reload Nginx\n"
     printf "  ${GREEN}6)${RESET} Show logs\n"
     printf "  ${GREEN}7)${RESET} Test SSL renewal\n"
-    printf "  ${RED}8)${RESET} Uninstall\n"
+    printf "  ${GREEN}8)${RESET} Proxy settings\n"
+    printf "  ${RED}9)${RESET} Uninstall\n"
     printf "  ${YELLOW}0)${RESET} Exit\n\n"
 
     local choice
@@ -490,7 +581,8 @@ main_menu() {
       5) reload_nginx ;;
       6) show_logs ;;
       7) renew_ssl ;;
-      8) uninstall_project ;;
+      8) configure_proxy ;;
+      9) uninstall_project ;;
       0) exit 0 ;;
       *) warn "Unknown option."; pause ;;
     esac

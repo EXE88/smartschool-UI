@@ -220,9 +220,12 @@ The script provides a colored interactive menu for:
 - Rolling back to older releases
 - Reloading Nginx
 - Viewing status and logs
+- Enabling a temporary proxy for `apt`, `npm`, `curl`, and `certbot` commands
 - Uninstalling the deployed frontend
 
 The production deployment uses timestamped releases under `/var/www/smartschool-ui/releases` and points `/var/www/smartschool-ui/current` to the active release. Rollback only changes the active symlink and reloads Nginx.
+
+Proxy support is session-based. When enabled from the menu, the script exports `http_proxy`, `https_proxy`, `HTTP_PROXY`, `HTTPS_PROXY`, `npm_config_proxy`, and `npm_config_https_proxy` for commands executed by that script run.
 
 ## 📄 License
 
