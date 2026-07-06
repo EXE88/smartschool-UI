@@ -22,7 +22,7 @@
   --radius-md: 20px;
   --radius-sm: 14px;
   --nav-height: 78px;
-  --top-height: 76px;
+  --top-height: 96px;
   --font: vazir, Tahoma, Segoe UI, sans-serif;
 }
 
@@ -630,7 +630,6 @@ input:focus {
   --primary-soft: rgba(15, 118, 110, 0.11);
   --accent: #3b82f6;
   --accent-soft: rgba(59, 130, 246, 0.13);
-  --top-height: 96px;
 }
 
 [data-theme="dark"] {
@@ -861,7 +860,7 @@ body.app-screen {
 
 @media (max-width: 900px) {
   .student-stats-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -978,7 +977,7 @@ body.app-screen {
     inset-inline: 12px !important;
     left: 12px !important;
     top: auto !important;
-    bottom: 96px;
+    bottom: calc(var(--nav-height) + 18px);
     width: auto !important;
   }
 }

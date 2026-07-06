@@ -255,18 +255,15 @@
     min-height: 62px;
   }
 
-  .dropdown-content {
-    inset-inline-start: auto;
-    inset-inline-end: 0;
-  }
-}
-
-/* Mobile profile dropdown must open inward from the right-side profile button. */
-@media (max-width: 720px) {
+  /* Fix: dropdown anchored to viewport so it never overflows off-screen */
   .profile-dropdown .dropdown-content {
-    inset-inline-start: 0 !important;
-    inset-inline-end: auto !important;
-    max-width: calc(100vw - 28px);
+    position: fixed;
+    top: calc(var(--top-height) + 4px);
+    inset-inline-start: 10px;
+    inset-inline-end: 10px;
+    min-width: 0;
+    max-width: none;
+    width: auto;
   }
 }
 

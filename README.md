@@ -62,59 +62,46 @@ SmartSchool UI is a web panel designed for a smart school system with a **right-
 
 ```text
 smartschool-UI/
-├── index.html
+├── index.html          # main entry point
+├── install.sh          # smart installer & manager (Linux servers)
 ├── package.json
 ├── js/
-│   ├── app.js
-│   ├── api.js
-│   ├── config.js
+│   ├── app.js          # app logic, rendering, navigation
+│   ├── api.js          # API layer, auth, token management
+│   ├── config.js       # backend URL and runtime config
 │   ├── handlers/
 │   ├── modal-managers/
 │   └── vendors/
-├── styles/
+├── styles/             # page and component styles
 ├── images/
 └── README.md
 ```
 
-Important files:
-
-- `index.html`: main entry point
-- `js/app.js`: app logic, page rendering, navigation, and UI behavior
-- `js/api.js`: API layer, authentication, and token management
-- `js/config.js`: backend URL and runtime config
-- `styles/`: page and component styles
-
 ## 📦 Requirements
+
+**Local development:**
 
 - Node.js 18+ recommended
 - npm
-- The SmartSchool backend running in a separate repository
 
-## ⚙️ Installation
+**Server deployment (via `install.sh`):**
 
-```powershell
+- A Debian/Ubuntu server with root access
+- The SmartSchool backend running and reachable
+
+## ▶️ Run Locally (Development)
+
+```bash
 npm install
+npm start        # serves on http://localhost:3000 with live reload
 ```
 
-## ▶️ Run Locally
+Other scripts:
 
-Make sure the backend project is already running, then start the frontend:
+- `npm run serve`: same as `start`
+- `npm run check`: syntax-check the main JavaScript files
 
-```powershell
-npm start
-```
-
-Or:
-
-```powershell
-npm run serve
-```
-
-By default, the app runs on port `3000` using `servor` with auto reload enabled. 🔥
-
-## 🔧 Backend Configuration
-
-Connection settings live in `js/config.js`:
+Point the UI at your backend by editing `js/config.js`:
 
 ```js
 window.SMARTSCHOOL_CONFIG = {
@@ -123,58 +110,56 @@ window.SMARTSCHOOL_CONFIG = {
 };
 ```
 
-Config options:
+## 🧙 Server Installation — Smart Installer
 
-- `apiBaseUrl`: base URL of the backend
-- `dashboardLimit`: limit value passed to the account dashboard endpoint
+The repository ships with a **transactional, menu-driven installer** for Linux servers:
 
-If your backend runs on a different host or port, update this file.
-
-## 🔗 Backend Dependency
-
-This repository is **not a standalone full product**. It depends on the SmartSchool backend for real data and business logic.
-
-Backend repository: https://github.com/EXE88/smartschool
-
-The current frontend is designed around these endpoints:
-
-- `POST /api/token/`
-- `POST /api/token/refresh/`
-- `GET /api/accounts/me/`
-- `POST /api/scores/`
-- `PATCH /api/scores/:id/`
-- `DELETE /api/scores/:id/`
-- `POST /api/homeworks/`
-- `PATCH /api/homeworks/:id/`
-- `DELETE /api/homeworks/:id/`
-- `POST /api/attendances/`
-- `DELETE /api/attendances/:id/`
-- `POST /api/comments/`
-- `PATCH /api/comments/:id/`
-- `DELETE /api/comments/:id/`
-
-## 🔐 Authentication Flow
-
-- User signs in through the login form
-- `access` and `refresh` tokens are saved in `localStorage`
-- Authenticated requests use `Authorization: Bearer <token>`
-- If the access token expires, the app automatically requests a new one using the refresh token
-
-## 📜 npm Scripts
-
-```json
-{
-  "start": "servor . index.html 3000 --reload",
-  "serve": "servor . index.html 3000 --reload",
-  "check": "node --check js/api.js && node --check js/app.js"
-}
+```bash
+sudo bash install.sh
 ```
 
-Usage:
+### What it does
 
-- `npm start`: run the project locally
-- `npm run serve`: same as `start`
-- `npm run check`: check syntax for the main JavaScript files
+On first run it launches a **guided wizard** that asks for:
+
+| Setting | Description |
+| --- | --- |
+| Backend API URL | Written into `js/config.js` |
+| Dashboard limit | `0` = unlimited |
+| Deploy mode | `Simple`, `Nginx`, or `Nginx + TLS` |
+| Domain / Port / Email | Depending on the chosen mode |
+
+### 🚦 Deploy modes
+
+- **Simple** — runs the UI as a standalone `systemd` service on a port of your choice. Zero extra dependencies; great for testing.
+- **Nginx** — deploys as a static production site behind Nginx with caching headers and SPA fallback.
+- **Nginx + TLS** — same as above, plus a free **Let's Encrypt** HTTPS certificate with automatic HTTP→HTTPS redirect.
+
+### ♻️ Rollback safety
+
+Every install/reconfigure action runs inside a **transaction**. If anything fails — or you press `Ctrl+C` mid-way — the script automatically restores every file, service, and Nginx site it touched, so you can simply run it again from a clean state.
+
+### 🧰 Management menu
+
+After installation, running `sudo bash install.sh` again opens a management menu. **Every decision made during install can be changed later** — no need to reinstall from scratch:
+
+1. **Change backend API URL** — rewrites `js/config.js` in place
+2. **Change deploy mode** — switch between simple / nginx / TLS anytime; the script knows what to stop, remove, and start for each transition
+3. **Change domain** — updates the Nginx config and re-issues the TLS certificate if needed
+4. **Redeploy files** — sync the latest source and restart only what's necessary
+5. **Status** — services, ports, and certificate info
+6. **Logs** — follow live service or Nginx logs
+7. **Uninstall** — cleanly removes the app, service, Nginx site, and settings
+
+Settings are persisted in `/etc/smartschool-ui/install.env` and the app is deployed to `/var/www/smartschool-ui`.
+
+## 🧠 How It Works
+
+1. A splash/loading screen is shown first.
+2. If no token exists, the user is redirected to the login view.
+3. After successful login, account data is fetched from the backend.
+4. The correct dashboard is rendered based on the user role.
+5. All create, edit, and delete actions are sent through the API, then the dashboard is reloaded.
 
 ## 🎨 UI Highlights
 
@@ -186,46 +171,12 @@ Usage:
 - Toast messages for success and error feedback
 - Jalali date conversion and selection for a better local user experience
 
-## 🧠 How It Works
-
-1. A splash/loading screen is shown first.
-2. If no token exists, the user is redirected to the login view.
-3. After successful login, account data is fetched from the backend.
-4. The correct dashboard is rendered based on the user role.
-5. All create, edit, and delete actions are sent through the API, then the dashboard is reloaded.
-
 ## 🧪 Development Notes
 
 - The current main entry logic lives in `js/app.js`.
 - The project uses a simple no-bundler structure, so files are loaded directly in the browser.
 - Frontend and backend changes should be kept in sync.
 - If the backend response contracts change, parts of `js/api.js` and `js/app.js` will likely need updates.
-
-## 🚀 Production Deployment Manager
-
-This repository includes a production helper script for Linux servers:
-
-```bash
-sudo bash scripts/production-manager.sh
-```
-
-The script provides a colored interactive menu for:
-
-- Installing Nginx, Certbot, and required server packages
-- Deploying SmartSchool UI as a static production release
-- Configuring the backend API URL in `js/config.js`
-- Creating an Nginx site configuration
-- Enabling HTTPS with Let's Encrypt and Certbot
-- Deploying new releases
-- Rolling back to older releases
-- Reloading Nginx
-- Viewing status and logs
-- Enabling a temporary proxy for `apt`, `npm`, `curl`, and `certbot` commands
-- Uninstalling the deployed frontend
-
-The production deployment uses timestamped releases under `/var/www/smartschool-ui/releases` and points `/var/www/smartschool-ui/current` to the active release. Rollback only changes the active symlink and reloads Nginx.
-
-Proxy support is session-based. When enabled from the menu, the script exports `http_proxy`, `https_proxy`, `HTTP_PROXY`, `HTTPS_PROXY`, `npm_config_proxy`, and `npm_config_https_proxy` for commands executed by that script run.
 
 ## 📄 License
 
