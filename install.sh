@@ -194,7 +194,7 @@ trap on_interrupt INT TERM
 # ============================================================================
 # Env persistence
 # ============================================================================
-load_env() { [[ -f "$ENV_FILE" ]] && . "$ENV_FILE"; }
+load_env() { if [[ -f "$ENV_FILE" ]]; then . "$ENV_FILE"; fi; }
 
 save_env() {
   mkdir -p "$CONF_DIR"
